@@ -28,11 +28,11 @@ public class Dog : MonoBehaviour
 
 		//left-right rotation of dog
 		if (Input.GetAxis("Horizontal") < 0)
-			rigidbody2D.transform.localRotation = Quaternion.Euler(0,180, 0);
+			rigidbody2D.transform.localRotation = Quaternion.Euler(0,0, 0);
 		else if (Input.GetAxis("Horizontal") > 0)
-			rigidbody2D.transform.localRotation = Quaternion.Euler(0, 0, 0);
+			rigidbody2D.transform.localRotation = Quaternion.Euler(0, 180, 0);
 
-		//dog changing direction (and hasnt hit max speed)
+		//dog changing left-right direction (and hasnt hit max speed)
 		if(x * rigidbody2D.velocity.x < maxSpeed)
 			rigidbody2D.AddForce(Vector2.right * x * moveForce);
 
@@ -40,5 +40,12 @@ public class Dog : MonoBehaviour
 		if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed)
 			rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.x) * maxSpeed, rigidbody2D.velocity.y);
 
+		//dog changing up-down direction (and hasnt hit max speed)
+			if(y * rigidbody2D.velocity.y < maxSpeed)
+				rigidbody2D.AddForce(Vector2.up * y * moveForce);
+
+		// if dog velocity is greater than his max speed then set dog velocity to maxspeed
+		if(Mathf.Abs(rigidbody2D.velocity.y) > maxSpeed)
+			rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.y) * maxSpeed, rigidbody2D.velocity.x);
 	}
 }
