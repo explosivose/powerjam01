@@ -13,7 +13,17 @@ public class Dog : MonoBehaviour
 	{
 	
 	}
-	
+
+	void Update ()
+	{
+		Vector3 dogScale = transform.localScale;
+		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
+		float PCHeight = 1-(screenPos.y / Screen.height);
+		dogScale = PCHeight * Vector3.one;
+		transform.localScale = dogScale;
+	}
+
+
 	// Update is called once per frame
 	void FixedUpdate () 
 	{
