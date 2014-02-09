@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System; // i'm using Array class from here 
 using System.Collections;
 
 // Each object in the scene that starts off unsaturated has this script.
@@ -7,6 +8,7 @@ public class SaturatableObject : MonoBehaviour
 {
 	
 	private SpriteRenderer r;
+	private Texture2D currentTexture;
 	private Texture2D originalTexture;
 	private Color[] originalPixels;
 	
@@ -16,49 +18,96 @@ public class SaturatableObject : MonoBehaviour
 		// Save original sprite texture data
 		r = GetComponent<SpriteRenderer>();
 		
-		originalTexture = r.sprite.texture;
-		originalPixels = originalTexture.GetPixels();
+		// reference to the active component
+		currentTexture = r.sprite.texture;
+		originalPixels = currentTexture.GetPixels();
+		
+		// a copy of the original texture before game starts
+		// 
+		originalTexture = new Texture2D(currentTexture.width, currentTexture.height);
+		originalTexture.SetPixels( originalPixels );
+		originalTexture.Apply();
+		
+		
 		
 		// Set low initial color saturation
-		SetSaturationMultiplier(0.2f);
-		
-		// Start test coroutine
-		StartCoroutine( TestRoutine() );
+		SetSaturationMultiplier(0.1f);
+
+	}
+	
+	void Update()
+	{
+		if (Input.GetButton("Fire1"))
+			SaturateAroundMousePointer();
 	}
 	
 	void SetSaturationMultiplier(float m)
 	{
-		
-		int h = r.sprite.texture.height;
-		int w = r.sprite.texture.width;
 		// GetPixels() has a bunch of useful overloads!
 		Color[] current = r.sprite.texture.GetPixels();
 		
-		if (current.Length != originalPixels.Length)
-			Debug.LogError("WOOPS");
-		
 		for (int i = 0; i < current.Length; i++)
 		{
-			HSBColor c = new HSBColor(originalPixels[i]);
-			c.s *= m;
-			current[i] = c.ToColor();
+			HSBColor pixel = new HSBColor(originalPixels[i]);
+			pixel.s *= m;
+			current[i] = pixel.ToColor();
 		}
 		r.sprite.texture.SetPixels(current);
 		r.sprite.texture.Apply();
 	}
 	
-	IEnumerator TestRoutine()
+	void SetSaturationMultiplier(float m, int x, int y, int w, int h)
 	{
-		while (true)
+		float heightFactor =  (float)r.sprite.texture.height / (float)Screen.height;
+		float widthFactor = (float)r.sprite.texture.width / (float)Screen.width;
+		
+		//y -= Mathf.RoundToInt((h * heightFactor)/2f);
+		//h = Mathf.RoundToInt(heightFactor * h);
+		
+		//x -= Mathf.RoundToInt((w * widthFactor)/2f);
+		//w = Mathf.RoundToInt(widthFactor * w);
+		
+		Debug.Log ("[" + x + ", " + y + ", " + h + ", " + w + "]");
+		//Debug.Log (w + ", " + h);
+		
+		Mathf.Clamp (x, 0, currentTexture.width);
+		Mathf.Clamp (w, 0, currentTexture.width);
+		Mathf.Clamp (y, 0, currentTexture.height);
+		Mathf.Clamp (h, 0, currentTexture.height);
+		
+		Color[] current = r.sprite.texture.GetPixels(x, y, w, h);
+		Color[] original = originalTexture.GetPixels(x, y, w, h);
+		
+		for (int i = 0; i < current.Length; i++)
 		{
-			yield return new WaitForSeconds(0.05f);
-			float input = Input.GetAxis("Horizontal") + 1f;
-			SetSaturationMultiplier(input);
+			HSBColor px = new HSBColor(original[i]);
+			px.s *= m;
+			current[i] = px.ToColor();
 		}
+		r.sprite.texture.SetPixels(x, y, w, h, current);
+		r.sprite.texture.Apply();
+		
+	}
+	
+	
+	void SaturateAroundMousePointer()
+	{
+		Vector3 mouse = Input.mousePosition;
+		int brushSize = 128;
+		int brushLeft = Mathf.RoundToInt(mouse.x - brushSize/2);
+		int brushBottom = Mathf.RoundToInt(mouse.y - brushSize/2);
+		int brushHeight = brushSize;
+		int brushWidth = brushSize;
+		
+		Vector3 brush = Camera.main.ScreenToWorldPoint(mouse);
+		brush.z = transform.position.z;
+		Debug.DrawLine(Camera.main.transform.position, brush, Color.red, 2f);
+		
+		SetSaturationMultiplier(1f, brushLeft, brushBottom, brushHeight, brushWidth);
 	}
 	
 	void OnApplicationQuit()
 	{
-		Resources.UnloadAsset(originalTexture);
+		Resources.UnloadAsset(currentTexture);
 	}
 }
