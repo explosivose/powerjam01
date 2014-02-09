@@ -5,9 +5,13 @@ public class Dog : MonoBehaviour
 {
 	private Vector2 targetPosition = Vector2.zero;
 	private float boxoffset = 0;
+	private int timeSinceFootprint = 0;
 
 	public float moveForce = 10f;			// added force to move the dog
 	public float maxSpeed = 0.5f;				// max dog speed
+	public Transform footprint;				// footprint prefab/sprite to spawn
+	public int footprintInterval = 30;		// distance between each footprint
+	public float footprintOffsetY = 0.4f;	// unit vectors downwards
 
 	// Use this for initialization
 	void Start () 
@@ -70,5 +74,19 @@ public class Dog : MonoBehaviour
 		// if dog velocity is greater than his max speed then set dog velocity to maxspeed
 		if(Mathf.Abs(rigidbody2D.velocity.y) > maxSpeed)
 			rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.y) * maxSpeed, rigidbody2D.velocity.x);
+
+		//after moving far enough, will spawn a footprint
+		timeSinceFootprint += Mathf.FloorToInt(rigidbody2D.velocity.magnitude);
+		if (timeSinceFootprint >= footprintInterval) {
+			timeSinceFootprint = 0;
+			SpriteRenderer sr = GetComponent<SpriteRenderer>();
+			//get the feet of the sprite (/3.0f is a rough adjustment)
+			float yOffset = sr.bounds.size.y * footprintOffsetY;
+			//footprint is at the bottom of the transform, and behind it
+			Vector3 fPos = transform.position-Vector3.up*yOffset-Vector3.back*2;
+			
+			Transform f = Instantiate (footprint, fPos,Quaternion.identity) as Transform;
+			f.localScale = transform.localScale*2;
+		}
 	}
 }
