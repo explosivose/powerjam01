@@ -3,14 +3,15 @@ using System.Collections;
 
 public class Dog : MonoBehaviour 
 {
+	private Animator animator;
 	private Vector2 targetPosition = Vector2.zero;
 	private float boxoffset = 0;
 	private int timeSinceFootprint = 0;
 	private bool leftFootForwards = false;
 	private float PCHeight = 0f;
 	
-	public float moveForce = 10f;			// added force to move the dog
-	public float maxSpeed = 0.5f;			// max dog speed
+	public float moveForce = 100f;			// added force to move the dog
+	public float maxSpeed = 50f;			// max dog speed
 	public Transform footprint;				// footprint prefab/sprite to spawn
 	public int footprintInterval = 30;		// distance between each footprint
 	public float footprintOffsetY = 0.4f;	// unit vectors downwards
@@ -48,6 +49,7 @@ public class Dog : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		animator = GetComponent<Animator>();
 		boxoffset = GetComponent<BoxCollider2D> ().center.x;
 		// calculate how far the doggy can smell (smells further when he's sitting still)
 		StartCoroutine( SmellRadius() );
@@ -55,6 +57,7 @@ public class Dog : MonoBehaviour
 
 	void Update ()
 	{
+		Debug.Log (rigidbody2D.velocity.magnitude);
 		Vector3 dogScale = transform.localScale;
 		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
 		PCHeight = 1-(screenPos.y / Screen.height);
@@ -72,7 +75,11 @@ public class Dog : MonoBehaviour
 		// Take keyboard input and work out a target position
 		float x = Input.GetAxis("Horizontal");
 		float y = Input.GetAxis("Vertical");
-		
+
+		if (x == 0 && y == 0)
+			animator.SetInteger ("animate", 0);
+		else
+			animator.SetInteger ("animate", 1);
 
 		//left-right rotation of dog
 		if (x < 0) {
@@ -93,20 +100,23 @@ public class Dog : MonoBehaviour
 		}
 
 		//dog changing left-right direction (and hasnt hit max speed)
-		if(x * rigidbody2D.velocity.x < maxSpeed)
+		if(x * rigidbody2D.velocity.x < maxSpeed) {
 			rigidbody2D.AddForce(Vector2.right * x * moveForce);
+		}
 
 		// if dog velocity is greater than his max speed then set dog velocity to maxspeed
 		if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed)
 			rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.x) * maxSpeed, rigidbody2D.velocity.y);
 
 		//dog changing up-down direction (and hasnt hit max speed)
-			if(y * rigidbody2D.velocity.y < maxSpeed)
-				rigidbody2D.AddForce(Vector2.up * y * moveForce);
+		if(y * rigidbody2D.velocity.y < maxSpeed) {
+			rigidbody2D.AddForce(Vector2.up * y * moveForce);
+		}
 
 		// if dog velocity is greater than his max speed then set dog velocity to maxspeed
-		if(Mathf.Abs(rigidbody2D.velocity.y) > maxSpeed)
+		if(Mathf.Abs(rigidbody2D.velocity.y) > maxSpeed) {
 			rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.y) * maxSpeed, rigidbody2D.velocity.x);
+		}
 
 		//after moving far enough, will spawn a footprint
 		timeSinceFootprint += Mathf.FloorToInt(rigidbody2D.velocity.magnitude);
@@ -161,8 +171,9 @@ public class Dog : MonoBehaviour
 				smellRadius *= PCHeight;
 				//Debug.DrawLine(transform.position, transform.position + Vector3.up * smellRadius);
 				yield return new WaitForFixedUpdate();
-				if (rigidbody2D.velocity.magnitude < 0.1f)
+				if (rigidbody2D.velocity.magnitude < 0.1f){
 					moving = false;
+				}
 			}
 			
 			while(!moving)
