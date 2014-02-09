@@ -8,7 +8,7 @@ public class Dog : MonoBehaviour
 	private int timeSinceFootprint = 0;
 
 	public float moveForce = 10f;			// added force to move the dog
-	public float maxSpeed = 0.5f;				// max dog speed
+	public float maxSpeed = 0.5f;			// max dog speed
 	public Transform footprint;				// footprint prefab/sprite to spawn
 	public int footprintInterval = 30;		// distance between each footprint
 	public float footprintOffsetY = 0.4f;	// unit vectors downwards
@@ -84,9 +84,14 @@ public class Dog : MonoBehaviour
 			float yOffset = sr.bounds.size.y * footprintOffsetY;
 			//footprint is at the bottom of the transform, and behind it
 			Vector3 fPos = transform.position-Vector3.up*yOffset-Vector3.back*0.01f;
-			
-			Transform f = Instantiate (footprint, fPos,Quaternion.identity) as Transform;
+			//angled to look like its against the ground
+			Quaternion r = Quaternion.Euler(transform.position);
+
+			Transform f = Instantiate (footprint, fPos,r) as Transform;
 			f.localScale = transform.localScale*2;
+			f.Rotate (50,0,0);
+			//todo: verify this is in the direction that the dog is walking in
+			f.Rotate(0,0,Vector2.Angle(Vector2.up,rigidbody2D.velocity));
 		}
 	}
 }
