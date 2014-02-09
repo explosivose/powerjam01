@@ -8,7 +8,7 @@ public class SceneChange : MonoBehaviour {
 	SpriteRenderer sr;
 
 	void Start() {
-		sr = GetComponent<SpriteRenderer>();
+		sr = transform.FindChild("fader").GetComponent<SpriteRenderer>();
 	}
 
 
@@ -24,9 +24,7 @@ public class SceneChange : MonoBehaviour {
 		for (int i=0;i<50;i++) {
 			//TODO: move as it fades?
 			Color c = sr.color;
-			c.r -= 0.02f;
-			c.g -= 0.02f;
-			c.b -= 0.02f;
+			c.a += 0.01f;
 			sr.color = c;
 			yield return new WaitForSeconds(0.01f);
 		}
