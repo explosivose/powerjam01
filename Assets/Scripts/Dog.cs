@@ -80,10 +80,10 @@ public class Dog : MonoBehaviour
 		if (timeSinceFootprint >= footprintInterval) {
 			timeSinceFootprint = 0;
 			SpriteRenderer sr = GetComponent<SpriteRenderer>();
-			//get the feet of the sprite (/3.0f is a rough adjustment)
+			//get the feet of the sprite TODO: X offset and even double footprints
 			float yOffset = sr.bounds.size.y * footprintOffsetY;
 			//footprint is at the bottom of the transform, and behind it
-			Vector3 fPos = transform.position-Vector3.up*yOffset-Vector3.back*2;
+			Vector3 fPos = transform.position-Vector3.up*yOffset-Vector3.back*0.5f;
 			
 			Transform f = Instantiate (footprint, fPos,Quaternion.identity) as Transform;
 			f.localScale = transform.localScale*2;
