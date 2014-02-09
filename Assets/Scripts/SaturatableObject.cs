@@ -41,9 +41,7 @@ public class SaturatableObject : MonoBehaviour
 	
 	void Update()
 	{
-		/*if (Input.GetButton("Fire1"))
-			SaturateAroundMousePointer();*/
-			
+		
 		SaturateAroundDog();
 	}
 	
