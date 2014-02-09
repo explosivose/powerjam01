@@ -256,6 +256,7 @@ public class GUIManager : MonoBehaviour
 			state = GUIState.MainMenu;
 	}
 	
+	public bool esc;
 	
 	/// <summary>
 	/// Called every fixed update.
@@ -263,11 +264,11 @@ public class GUIManager : MonoBehaviour
 	/// </summary>
 	void FixedUpdate()
 	{
-		if (Input.GetKeyDown(KeyCode.Escape) && state == GUIState.NoWindows) 
+		if (Input.GetKeyUp(KeyCode.Escape) && state == GUIState.NoWindows) 
 		{
 			state = GUIState.MainMenu;
 		}
-		else if ( Input.GetKeyDown(KeyCode.Escape) && state != GUIState.NoWindows)
+		else if ( Input.GetKeyUp(KeyCode.Escape) && state != GUIState.NoWindows)
 		{
 			state = GUIState.NoWindows;
 		}

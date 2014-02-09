@@ -11,6 +11,8 @@ public class SaturatableObject : MonoBehaviour
 	private Texture2D currentTexture;
 	private Texture2D originalTexture;
 	private Color[] originalPixels;
+	private Dog dogScript;
+	private Transform sniffer;
 	
 	// Save the original sprite texture 2D information before desaturation
 	void Awake() 
@@ -28,17 +30,36 @@ public class SaturatableObject : MonoBehaviour
 		originalTexture.SetPixels( originalPixels );
 		originalTexture.Apply();
 		
-		
-		
 		// Set low initial color saturation
 		SetSaturationMultiplier(0.1f);
-
+		
+		
+		// get reference to player transform
+		dogScript = GameObject.FindGameObjectWithTag("Player").GetComponent<Dog>();;
+		sniffer = GameObject.FindGameObjectWithTag("Sniffer").transform;
 	}
 	
 	void Update()
 	{
 		if (Input.GetButton("Fire1"))
 			SaturateAroundMousePointer();
+			
+		SaturateAroundDog();
+	}
+	
+	void SaturateAroundDog()
+	{
+		Vector3 pos = Camera.main.WorldToScreenPoint(sniffer.position);
+		int size = Mathf.RoundToInt(dogScript.smellRadius);
+		
+		int l = Mathf.RoundToInt(pos.x - size/2);
+		int b = Mathf.RoundToInt(pos.y - size/2);
+		int h = size;
+		int w = size;
+		
+		Debug.Log ("[" + l + ", " + b + ", " + h + ", " + w  + "]"); 
+		
+		SetSaturationMultiplier(1f, l, b, w, h);
 	}
 	
 	void SetSaturationMultiplier(float m)
@@ -61,19 +82,14 @@ public class SaturatableObject : MonoBehaviour
 		float heightFactor =  (float)r.sprite.texture.height / (float)Screen.height;
 		float widthFactor = (float)r.sprite.texture.width / (float)Screen.width;
 		
-		//y -= Mathf.RoundToInt((h * heightFactor)/2f);
-		//h = Mathf.RoundToInt(heightFactor * h);
-		
-		//x -= Mathf.RoundToInt((w * widthFactor)/2f);
-		//w = Mathf.RoundToInt(widthFactor * w);
-		
-		Debug.Log ("[" + x + ", " + y + ", " + h + ", " + w + "]");
+		//Debug.Log ("[" + x + ", " + y + ", " + h + ", " + w + "]");
 		//Debug.Log (w + ", " + h);
 		
-		Mathf.Clamp (x, 0, currentTexture.width);
-		Mathf.Clamp (w, 0, currentTexture.width);
-		Mathf.Clamp (y, 0, currentTexture.height);
-		Mathf.Clamp (h, 0, currentTexture.height);
+		if ( x < 0 ) x = 0;
+		if ( y < 0 ) y = 0;
+		
+		if ( x + w  > currentTexture.width) w = currentTexture.width - x;
+		if ( y + h > currentTexture.height) h = currentTexture.height - y;
 		
 		Color[] current = r.sprite.texture.GetPixels(x, y, w, h);
 		Color[] original = originalTexture.GetPixels(x, y, w, h);
@@ -88,7 +104,6 @@ public class SaturatableObject : MonoBehaviour
 		r.sprite.texture.Apply();
 		
 	}
-	
 	
 	void SaturateAroundMousePointer()
 	{
