@@ -4,6 +4,7 @@ using System.Collections;
 public class Dog : MonoBehaviour 
 {
 	private Vector2 targetPosition = Vector2.zero;
+	private float boxoffset = 0;
 
 	public float moveForce = 10f;			// added force to move the dog
 	public float maxSpeed = 0.5f;				// max dog speed
@@ -11,7 +12,7 @@ public class Dog : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-	
+		boxoffset = GetComponent<BoxCollider2D> ().center.x;
 	}
 
 	void Update ()
@@ -37,10 +38,22 @@ public class Dog : MonoBehaviour
 //		currentPosition2 = currentPosition3.y;
 
 		//left-right rotation of dog
-		if (Input.GetAxis("Horizontal") < 0)
-			rigidbody2D.transform.localRotation = Quaternion.Euler(0,0, 0);
-		else if (Input.GetAxis("Horizontal") > 0)
-			rigidbody2D.transform.localRotation = Quaternion.Euler(0, 180, 0);
+		if (Input.GetAxis ("Horizontal") < 0) {
+			transform.rotation = Quaternion.Euler (0, 0, 0);
+
+			BoxCollider2D rot = GetComponent<BoxCollider2D>();
+			Vector2 center = rot.center;
+			center.x = boxoffset;
+			rot.center = center;
+		}
+		else if (Input.GetAxis("Horizontal") > 0){
+			transform.rotation = Quaternion.Euler(0, 180, 0);
+
+			BoxCollider2D rot = GetComponent<BoxCollider2D>();
+			Vector2 center = rot.center;
+			center.x = -boxoffset;
+			rot.center = center;
+		}
 
 		//dog changing left-right direction (and hasnt hit max speed)
 		if(x * rigidbody2D.velocity.x < maxSpeed)
