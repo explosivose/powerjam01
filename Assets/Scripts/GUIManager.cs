@@ -175,7 +175,7 @@ public class GUIManager : MonoBehaviour
 	
 
 	
-	private GUIState state = GUIState.MainMenu;
+	private GUIState state = GUIState.NoWindows;
 	
 	
 	private Rect windowSize = new Rect();
