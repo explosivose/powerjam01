@@ -56,7 +56,7 @@ public class Dog : MonoBehaviour
 //		currentPosition2 = currentPosition3.y;
 
 		//left-right rotation of dog
-		if (Input.GetAxis ("Horizontal") < 0) {
+		if (x < 0) {
 			transform.rotation = Quaternion.Euler (0, 0, 0);
 
 			BoxCollider2D rot = GetComponent<BoxCollider2D>();
@@ -64,7 +64,7 @@ public class Dog : MonoBehaviour
 			center.x = boxoffset;
 			rot.center = center;
 		}
-		else if (Input.GetAxis("Horizontal") > 0){
+		else if (x > 0){
 			transform.rotation = Quaternion.Euler(0, 180, 0);
 
 			BoxCollider2D rot = GetComponent<BoxCollider2D>();
@@ -103,9 +103,11 @@ public class Dog : MonoBehaviour
 
 			Transform f = Instantiate (footprint, fPos,r) as Transform;
 			f.localScale = transform.localScale*2;
-			f.Rotate (50,0,0);
-			//TODO: fix rotation when moving right
-			f.Rotate(0,0,Vector2.Angle(Vector2.up,rigidbody2D.velocity));
+			//TODO: fix rotation when moving diagonal right
+
+			if (rigidbody2D.velocity.x<0)
+				f.Rotate(50,0,Vector2.Angle(Vector2.up,rigidbody2D.velocity));
+			else f.Rotate(50,0,180+Vector2.Angle(Vector2.up,-rigidbody2D.velocity));
 		}
 	}
 }
