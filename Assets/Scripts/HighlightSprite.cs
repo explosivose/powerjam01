@@ -10,7 +10,8 @@ public class HighlightSprite : MonoBehaviour {
 	private Vector3 guiXPos;
 	private Vector3 guiYPos;
 	private Vector3 screenPos;
-	private bool showLabel;
+	private bool mouseOver;
+	public bool showLabel;
 
 	//Use this for initialization
 	void Start ()
@@ -20,24 +21,24 @@ public class HighlightSprite : MonoBehaviour {
 		startColor = spriteRenderer.color;
 		label = transform.name;
 		screenPos = Vector3.zero;
-		showLabel = false;
+		mouseOver = false;
 	}
 
 	void OnMouseEnter()
 	{
 		spriteRenderer.color = Color.yellow;
-		showLabel = true;
+		mouseOver = true;
 	}
 
 	void OnMouseExit()
 	{
 		spriteRenderer.color = startColor;
-		showLabel = false;
+		mouseOver = false;
 	}
 
 	void OnGUI()
 	{
-		if (showLabel)
+		if (mouseOver && showLabel)
 		{
 		screenPos = Camera.main.WorldToScreenPoint(transform.position);
 		GUI.Label(new Rect((screenPos.x - (boxCollider2D.size.x * 9)), (screenPos.y - (boxCollider2D.size.x * 7)), transform.name.Length*10, 22), label);
