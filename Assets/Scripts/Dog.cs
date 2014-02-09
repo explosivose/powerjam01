@@ -6,6 +6,7 @@ public class Dog : MonoBehaviour
 	private Vector2 targetPosition = Vector2.zero;
 	private float boxoffset = 0;
 	private int timeSinceFootprint = 0;
+	private bool leftFootForwards = false;
 
 	public float moveForce = 10f;			// added force to move the dog
 	public float maxSpeed = 0.5f;			// max dog speed
@@ -56,7 +57,7 @@ public class Dog : MonoBehaviour
 //		currentPosition2 = currentPosition3.y;
 
 		//left-right rotation of dog
-		if (Input.GetAxis ("Horizontal") < 0) {
+		if (x < 0) {
 			transform.rotation = Quaternion.Euler (0, 0, 0);
 
 			BoxCollider2D rot = GetComponent<BoxCollider2D>();
@@ -64,7 +65,7 @@ public class Dog : MonoBehaviour
 			center.x = boxoffset;
 			rot.center = center;
 		}
-		else if (Input.GetAxis("Horizontal") > 0){
+		else if (x > 0){
 			transform.rotation = Quaternion.Euler(0, 180, 0);
 
 			BoxCollider2D rot = GetComponent<BoxCollider2D>();
@@ -92,20 +93,38 @@ public class Dog : MonoBehaviour
 		//after moving far enough, will spawn a footprint
 		timeSinceFootprint += Mathf.FloorToInt(rigidbody2D.velocity.magnitude);
 		if (timeSinceFootprint >= footprintInterval) {
-			timeSinceFootprint = 0;
-			SpriteRenderer sr = GetComponent<SpriteRenderer>();
-			//get the feet of the sprite TODO: X offset and even double footprints
-			float yOffset = sr.bounds.size.y * footprintOffsetY;
-			//footprint is at the bottom of the transform, and behind it
-			Vector3 fPos = transform.position-Vector3.up*yOffset-Vector3.back*0.01f;
-			//angled to look like its against the ground
-			Quaternion r = Quaternion.Euler(transform.position);
 
+			SpriteRenderer sr = GetComponent<SpriteRenderer>();
+
+			//get the feet of the sprite
+			float yOffset = sr.bounds.size.y * footprintOffsetY;
+			//TODO: two sets of legs, once animation is added check if X offsets must be added
+			//float xOffset = sr.bounds.size.x /4;
+			//Vector3 fPos = transform.position-Vector3.up*yOffset+Vector3.left*xOffset;
+			Vector3 fPos = transform.position-Vector3.up*yOffset;
+			sr.sortingLayerName = "Betsy";
+			sr.sortingOrder = 1;
+
+			Quaternion r = Quaternion.Euler(transform.position);
 			Transform f = Instantiate (footprint, fPos,r) as Transform;
+			//scale up
 			f.localScale = transform.localScale*2;
-			f.Rotate (50,0,0);
-			//TODO: fix rotation when moving right
-			f.Rotate(0,0,Vector2.Angle(Vector2.up,rigidbody2D.velocity));
+
+			//rotates 50 degrees along X so it looks like it's on the ground
+			//rotates to face the direction that the player is moving
+			if (rigidbody2D.velocity.x<0)
+				f.Rotate(50,0,Vector2.Angle(Vector2.up,rigidbody2D.velocity));
+			else f.Rotate(50,0,180+Vector2.Angle(Vector2.up,-rigidbody2D.velocity));
+
+			//TODO: 
+
+			//alternating footsteps are left then right
+			if (leftFootForwards)
+				f.Translate(Vector3.left*0.2f);
+			else f.Translate(Vector3.right*0.2f);
+
+			timeSinceFootprint = 0;
+			leftFootForwards ^= true; //alternate between true and false
 		}
 	}
 }
