@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Dog : MonoBehaviour 
 {
+	private Animator animator;
 	private Vector2 targetPosition = Vector2.zero;
 	private float boxoffset = 0;
 	private int timeSinceFootprint = 0;
@@ -36,6 +37,7 @@ public class Dog : MonoBehaviour
 
 	void Update ()
 	{
+		animator = GetComponent<Animator>();
 		Vector3 dogScale = transform.localScale;
 		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
 		float PCHeight = 1-(screenPos.y / Screen.height);
@@ -72,6 +74,16 @@ public class Dog : MonoBehaviour
 			Vector2 center = rot.center;
 			center.x = -boxoffset;
 			rot.center = center;
+		}
+		if (y > 0.5) {
+			animator.SetInteger("Direction", 0);
+		}
+		else if (y < -0.5) {
+			animator.SetInteger("Direction", 2);
+		}
+		else if (x > 0.5) {
+			animator.SetInteger("Direction", 1);
+			animator.SetInteger("Direction", 3);
 		}
 
 		//dog changing left-right direction (and hasnt hit max speed)
