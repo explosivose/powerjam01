@@ -7,13 +7,18 @@ public class Dog : MonoBehaviour
 	private float boxoffset = 0;
 	private int timeSinceFootprint = 0;
 	private bool leftFootForwards = false;
-
+	private float PCHeight = 0f;
+	
 	public float moveForce = 10f;			// added force to move the dog
 	public float maxSpeed = 0.5f;			// max dog speed
 	public Transform footprint;				// footprint prefab/sprite to spawn
 	public int footprintInterval = 30;		// distance between each footprint
 	public float footprintOffsetY = 0.4f;	// unit vectors downwards
 	public static Vector2 spawnPosition;	// as a percentage of screen height/width (0 to 1)
+	
+	public float smellRadius = 0f;
+	public float maxSmellRadius = 10f;
+	public float minSmellRadius = 4f;
 	
 	void OnLevelWasLoaded()
 	{
@@ -44,17 +49,25 @@ public class Dog : MonoBehaviour
 	void Start () 
 	{
 		boxoffset = GetComponent<BoxCollider2D> ().center.x;
+		// calculate how far the doggy can smell (smells further when he's sitting still)
+		StartCoroutine( SmellRadius() );
 	}
 
 	void Update ()
 	{
 		Vector3 dogScale = transform.localScale;
 		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
+<<<<<<< HEAD
 		float PCHeight = 1-(screenPos.y / Screen.height);
 		if (PCHeight < 0.5) //min height 0.5
 			PCHeight = 0.5f;
+=======
+		PCHeight = 1-(screenPos.y / Screen.height);
+>>>>>>> origin/master
 		dogScale = PCHeight * Vector3.one;
 		transform.localScale = dogScale;
+		
+
 	}
 
 
@@ -65,10 +78,6 @@ public class Dog : MonoBehaviour
 		float x = Input.GetAxis("Horizontal");
 		float y = Input.GetAxis("Vertical");
 		
-//		Vector3 currentPosition3 = Camera.main.WorldToScreenPoint(transform.position);
-//		Vector2 currentPosition2;
-//		currentPosition2 = currentPosition3.x;
-//		currentPosition2 = currentPosition3.y;
 
 		//left-right rotation of dog
 		if (x < 0) {
@@ -139,6 +148,39 @@ public class Dog : MonoBehaviour
 
 			timeSinceFootprint = 0;
 			leftFootForwards ^= true; //alternate between true and false
+		}
+	}
+	
+	IEnumerator SmellRadius()
+	{
+		while (true)
+		{
+			float startTime = Time.time;
+			bool moving = false;
+
+			
+			while(moving)
+			{
+				float t = (Time.time - startTime)/ 5f;
+				smellRadius = Mathf.Lerp(maxSmellRadius, minSmellRadius, t);
+				smellRadius *= PCHeight;
+				Debug.DrawLine(transform.position, transform.position + Vector3.up * smellRadius);
+				yield return new WaitForFixedUpdate();
+				if (rigidbody2D.velocity.magnitude < 0.1f)
+					moving = false;
+			}
+			
+			while(!moving)
+			{
+				float t = (Time.time - startTime)/ 5f;
+				smellRadius = Mathf.Lerp(minSmellRadius, maxSmellRadius, t);
+				smellRadius *= PCHeight;
+				Debug.DrawLine(transform.position, transform.position + Vector3.up * smellRadius);
+				yield return new WaitForFixedUpdate();
+				if (rigidbody2D.velocity.magnitude > 0.1f)
+					moving = true;
+			}
+
 		}
 	}
 	
