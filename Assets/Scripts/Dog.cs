@@ -12,7 +12,19 @@ public class Dog : MonoBehaviour
 	public Transform footprint;				// footprint prefab/sprite to spawn
 	public int footprintInterval = 30;		// distance between each footprint
 	public float footprintOffsetY = 0.4f;	// unit vectors downwards
-
+	public static Vector2 spawnPosition;	// as a percentage of screen height/width (0 to 1)
+	
+	void OnLevelWasLoaded()
+	{
+		if (spawnPosition != null)
+		{
+			float height = spawnPosition.y * Screen.height;
+			float width = spawnPosition.x * Screen.width;
+			Vector3 screenPos = new Vector3(width, height, transform.position.z);
+			transform.position = Camera.main.ScreenToWorldPoint(screenPos)
+		}
+	}
+	
 	// Use this for initialization
 	void Start () 
 	{

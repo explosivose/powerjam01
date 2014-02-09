@@ -9,6 +9,7 @@ public class SceneChange : MonoBehaviour {
 	void OnCollisionEnter2D(Collision2D coll) {
 		if (coll.gameObject.tag == "Player") {
 			//todo: play animation?
+			Dog.spawnPosition = spawnPosition;
 			Application.LoadLevel(destinationScene);
 		}
 	}
