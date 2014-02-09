@@ -57,11 +57,11 @@ public class Dog : MonoBehaviour
 	{
 		Vector3 dogScale = transform.localScale;
 		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
-		PCHeight = 1-(screenPos.y / Screen.height);
-		if (PCHeight < 0.5) //min height 0.5
-			PCHeight = 0.5f;
-
-		
+		float PCHeight = 1-(screenPos.y / Screen.height);
+		if (PCHeight < 0.2) //min height 0.5
+			PCHeight = 0.2f;
+		dogScale = PCHeight * Vector3.one;
+		transform.localScale = dogScale;
 
 	}
 
