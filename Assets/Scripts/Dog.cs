@@ -119,7 +119,8 @@ public class Dog : MonoBehaviour
 		}
 
 		//after moving far enough, will spawn a footprint
-		timeSinceFootprint += Mathf.FloorToInt(rigidbody2D.velocity.magnitude);
+		if (rigidbody2D.velocity.magnitude!=0)
+			timeSinceFootprint ++;
 		if (timeSinceFootprint >= footprintInterval) {
 
 			SpriteRenderer sr = GetComponent<SpriteRenderer>();
