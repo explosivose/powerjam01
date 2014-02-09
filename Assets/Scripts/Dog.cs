@@ -102,7 +102,7 @@ public class Dog : MonoBehaviour
 			Transform f = Instantiate (footprint, fPos,r) as Transform;
 			f.localScale = transform.localScale*2;
 			f.Rotate (50,0,0);
-			//todo: verify this is in the direction that the dog is walking in
+			//TODO: fix rotation when moving right
 			f.Rotate(0,0,Vector2.Angle(Vector2.up,rigidbody2D.velocity));
 		}
 	}

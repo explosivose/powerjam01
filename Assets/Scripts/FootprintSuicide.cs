@@ -4,7 +4,7 @@ using System.Collections;
 public class FootprintSuicide : MonoBehaviour {
 
 	SpriteRenderer sr;
-	public float startOpacity = 0.5f;
+	public float startOpacity = 0.15f;
 	public int secondsBeforeFade = 5;
 	//TODO (optional): fade duration
 
