@@ -31,7 +31,7 @@ public class SaturatableObject : MonoBehaviour
 		originalTexture.Apply();
 		
 		// Set low initial color saturation
-		SetSaturationMultiplier(0.25f);
+		//SetSaturationMultiplier(0.25f);
 		
 		
 		// get reference to player transform
@@ -42,7 +42,7 @@ public class SaturatableObject : MonoBehaviour
 	void Update()
 	{
 		
-		SaturateAroundDog();
+		//SaturateAroundDog();
 	}
 	
 	void SaturateAroundDog()
