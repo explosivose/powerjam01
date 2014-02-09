@@ -41,9 +41,7 @@ public class SaturatableObject : MonoBehaviour
 	
 	void Update()
 	{
-		if (Input.GetButton("Fire1"))
-			SaturateAroundMousePointer();
-			
+		
 		SaturateAroundDog();
 	}
 	
@@ -57,7 +55,7 @@ public class SaturatableObject : MonoBehaviour
 		int h = size;
 		int w = size;
 		
-		Debug.Log ("[" + l + ", " + b + ", " + h + ", " + w  + "]"); 
+		//Debug.Log ("[" + l + ", " + b + ", " + h + ", " + w  + "]"); 
 		
 		SetSaturationMultiplier(1f, l, b, w, h);
 	}
@@ -79,8 +77,6 @@ public class SaturatableObject : MonoBehaviour
 	
 	void SetSaturationMultiplier(float m, int x, int y, int w, int h)
 	{
-		float heightFactor =  (float)r.sprite.texture.height / (float)Screen.height;
-		float widthFactor = (float)r.sprite.texture.width / (float)Screen.width;
 		
 		//Debug.Log ("[" + x + ", " + y + ", " + h + ", " + w + "]");
 		//Debug.Log (w + ", " + h);

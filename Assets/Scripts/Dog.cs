@@ -57,16 +57,11 @@ public class Dog : MonoBehaviour
 	{
 		Vector3 dogScale = transform.localScale;
 		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
-<<<<<<< HEAD
-		float PCHeight = 1-(screenPos.y / Screen.height);
-		if (PCHeight < 0.5) //min height 0.5
-			PCHeight = 0.5f;
-=======
 		PCHeight = 1-(screenPos.y / Screen.height);
->>>>>>> origin/master
+		if (PCHeight < 0.2) //min height 0.5
+			PCHeight = 0.2f;
 		dogScale = PCHeight * Vector3.one;
 		transform.localScale = dogScale;
-		
 
 	}
 
@@ -151,20 +146,20 @@ public class Dog : MonoBehaviour
 		}
 	}
 	
+	
+	
 	IEnumerator SmellRadius()
 	{
 		while (true)
 		{
 			float startTime = Time.time;
 			bool moving = false;
-
-			
 			while(moving)
 			{
 				float t = (Time.time - startTime)/ 5f;
 				smellRadius = Mathf.Lerp(maxSmellRadius, minSmellRadius, t);
 				smellRadius *= PCHeight;
-				Debug.DrawLine(transform.position, transform.position + Vector3.up * smellRadius);
+				//Debug.DrawLine(transform.position, transform.position + Vector3.up * smellRadius);
 				yield return new WaitForFixedUpdate();
 				if (rigidbody2D.velocity.magnitude < 0.1f)
 					moving = false;
@@ -172,10 +167,10 @@ public class Dog : MonoBehaviour
 			
 			while(!moving)
 			{
-				float t = (Time.time - startTime)/ 5f;
+				float t = (Time.time - startTime)/ 3f;
 				smellRadius = Mathf.Lerp(minSmellRadius, maxSmellRadius, t);
 				smellRadius *= PCHeight;
-				Debug.DrawLine(transform.position, transform.position + Vector3.up * smellRadius);
+				//Debug.DrawLine(transform.position, transform.position + Vector3.up * smellRadius);
 				yield return new WaitForFixedUpdate();
 				if (rigidbody2D.velocity.magnitude > 0.1f)
 					moving = true;
