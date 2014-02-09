@@ -21,7 +21,7 @@ public class Dog : MonoBehaviour
 			float height = spawnPosition.y * Screen.height;
 			float width = spawnPosition.x * Screen.width;
 			Vector3 screenPos = new Vector3(width, height, transform.position.z);
-			transform.position = Camera.main.ScreenToWorldPoint(screenPos)
+			transform.position = Camera.main.ScreenToWorldPoint(screenPos);
 		}
 	}
 	
