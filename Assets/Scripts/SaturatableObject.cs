@@ -31,7 +31,7 @@ public class SaturatableObject : MonoBehaviour
 		originalTexture.Apply();
 		
 		// Set low initial color saturation
-		SetSaturationMultiplier(0.1f);
+		SetSaturationMultiplier(0.25f);
 		
 		
 		// get reference to player transform
@@ -114,7 +114,12 @@ public class SaturatableObject : MonoBehaviour
 		brush.z = transform.position.z;
 		Debug.DrawLine(Camera.main.transform.position, brush, Color.red, 2f);
 		
-		SetSaturationMultiplier(1f, brushLeft, brushBottom, brushHeight, brushWidth);
+		SetSaturationMultiplier(1.5f, brushLeft, brushBottom, brushHeight, brushWidth);
+	}
+	
+	void OnDestroy()
+	{
+		Resources.UnloadAsset(currentTexture);
 	}
 	
 	void OnApplicationQuit()

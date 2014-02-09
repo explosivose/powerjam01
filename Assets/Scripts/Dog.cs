@@ -178,7 +178,7 @@ public class Dog : MonoBehaviour
 			
 			while(!moving)
 			{
-				float t = (Time.time - startTime)/ 3f;
+				float t = (Time.time - startTime)/ 5f;
 				smellRadius = Mathf.Lerp(minSmellRadius, maxSmellRadius, t);
 				smellRadius *= PCHeight;
 				//Debug.DrawLine(transform.position, transform.position + Vector3.up * smellRadius);
