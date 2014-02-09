@@ -1,30 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SceneChange : MonoBehaviour {
+public class ProximityGlow : MonoBehaviour {
 
-	public string destinationScene = "";
-	public Vector2 spawnPosition;
 	private bool dogIsClose = false;
 	private Transform doggydogg;
-
-	void OnCollisionEnter2D(Collision2D coll) {
-		if (coll.gameObject.tag == "Player") {
-			//todo: play animation?
-			Dog.spawnPosition = spawnPosition;
-			Application.LoadLevel(destinationScene);
-		}
-	}
-
+	
 	void Update() {
 		if (dogIsClose) {
 			SpriteRenderer sr = GetComponent<SpriteRenderer>();
 			Color c = sr.color;
-			c.a = 6-Vector2.Distance (transform.position,doggydogg.position);
+			c.a = GetComponent<CircleCollider2D>().radius-Vector2.Distance (transform.position,doggydogg.position);
 			sr.color = c;
 		}
 	}
-
+	
 	void OnTriggerEnter2D(Collider2D coll)
 	{	
 		if (coll.tag == "Player") {
