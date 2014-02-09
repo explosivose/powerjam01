@@ -57,15 +57,10 @@ public class Dog : MonoBehaviour
 	{
 		Vector3 dogScale = transform.localScale;
 		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
-<<<<<<< HEAD
-		float PCHeight = 1-(screenPos.y / Screen.height);
+		PCHeight = 1-(screenPos.y / Screen.height);
 		if (PCHeight < 0.5) //min height 0.5
 			PCHeight = 0.5f;
-=======
-		PCHeight = 1-(screenPos.y / Screen.height);
->>>>>>> origin/master
-		dogScale = PCHeight * Vector3.one;
-		transform.localScale = dogScale;
+
 		
 
 	}
@@ -164,7 +159,7 @@ public class Dog : MonoBehaviour
 				float t = (Time.time - startTime)/ 5f;
 				smellRadius = Mathf.Lerp(maxSmellRadius, minSmellRadius, t);
 				smellRadius *= PCHeight;
-				Debug.DrawLine(transform.position, transform.position + Vector3.up * smellRadius);
+				//Debug.DrawLine(transform.position, transform.position + Vector3.up * smellRadius);
 				yield return new WaitForFixedUpdate();
 				if (rigidbody2D.velocity.magnitude < 0.1f)
 					moving = false;
@@ -175,7 +170,7 @@ public class Dog : MonoBehaviour
 				float t = (Time.time - startTime)/ 5f;
 				smellRadius = Mathf.Lerp(minSmellRadius, maxSmellRadius, t);
 				smellRadius *= PCHeight;
-				Debug.DrawLine(transform.position, transform.position + Vector3.up * smellRadius);
+				//Debug.DrawLine(transform.position, transform.position + Vector3.up * smellRadius);
 				yield return new WaitForFixedUpdate();
 				if (rigidbody2D.velocity.magnitude > 0.1f)
 					moving = true;
