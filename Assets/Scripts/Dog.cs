@@ -98,13 +98,14 @@ public class Dog : MonoBehaviour
 			float yOffset = sr.bounds.size.y * footprintOffsetY;
 			//footprint is at the bottom of the transform, and behind it
 			Vector3 fPos = transform.position-Vector3.up*yOffset-Vector3.back*0.01f;
-			//angled to look like its against the ground
+
 			Quaternion r = Quaternion.Euler(transform.position);
-
 			Transform f = Instantiate (footprint, fPos,r) as Transform;
+			//scale up
 			f.localScale = transform.localScale*2;
-			//TODO: fix rotation when moving diagonal right
 
+			//rotate 50 degrees along X so it looks like it's on the ground
+			//rotates to point in the direction that the player is moving
 			if (rigidbody2D.velocity.x<0)
 				f.Rotate(50,0,Vector2.Angle(Vector2.up,rigidbody2D.velocity));
 			else f.Rotate(50,0,180+Vector2.Angle(Vector2.up,-rigidbody2D.velocity));
