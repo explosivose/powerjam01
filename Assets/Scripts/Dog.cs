@@ -75,16 +75,15 @@ public class Dog : MonoBehaviour
 			center.x = -boxoffset;
 			rot.center = center;
 		}
-		if (y > 0.5) {
-			animator.SetInteger("Direction", 0);
-		}
-		else if (y < -0.5) {
-			animator.SetInteger("Direction", 2);
-		}
-		else if (x > 0.5) {
+
+		if (x > 0)
 			animator.SetInteger("Direction", 1);
+		else if (x < 0)
 			animator.SetInteger("Direction", 3);
-		}
+		else if (y > 0)
+			animator.SetInteger("Direction", 0);
+		else if (y < 0)
+			animator.SetInteger("Direction", 2);
 
 		//dog changing left-right direction (and hasnt hit max speed)
 		if(x * rigidbody2D.velocity.x < maxSpeed)
