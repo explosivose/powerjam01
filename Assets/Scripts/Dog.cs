@@ -127,4 +127,9 @@ public class Dog : MonoBehaviour
 			leftFootForwards ^= true; //alternate between true and false
 		}
 	}
+	
+	void OnGUI()
+	{
+		GUI.Label (new Rect(5,5,100,100), Application.loadedLevelName);
+	}
 }
