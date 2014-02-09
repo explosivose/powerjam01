@@ -13,7 +13,7 @@ public class Dog : MonoBehaviour
 	public float moveForce = 100f;			// added force to move the dog
 	public float maxSpeed = 50f;			// max dog speed
 	public Transform footprint;				// footprint prefab/sprite to spawn
-	public int footprintInterval = 30;		// distance between each footprint
+	public float footprintInterval = 0.5f;	// distance between each footprint
 	public float footprintOffsetY = 0.4f;	// unit vectors downwards
 	public static Vector2 spawnPosition;	// as a percentage of screen height/width (0 to 1)
 	
@@ -53,6 +53,7 @@ public class Dog : MonoBehaviour
 		boxoffset = GetComponent<BoxCollider2D> ().center.x;
 		// calculate how far the doggy can smell (smells further when he's sitting still)
 		StartCoroutine( SmellRadius() );
+		StartCoroutine( Footprints());
 	}
 
 	void Update ()
@@ -117,43 +118,45 @@ public class Dog : MonoBehaviour
 		if(Mathf.Abs(rigidbody2D.velocity.y) > maxSpeed) {
 			rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.y) * maxSpeed, rigidbody2D.velocity.x);
 		}
+	
+	}
 
-		//after moving far enough, will spawn a footprint
-		if (rigidbody2D.velocity.magnitude!=0)
-			timeSinceFootprint ++;
-		if (timeSinceFootprint >= footprintInterval) {
-
-			SpriteRenderer sr = GetComponent<SpriteRenderer>();
-
-			//get the feet of the sprite
-			float yOffset = sr.bounds.size.y * footprintOffsetY;
-			//TODO: does it need two sets of footprints or will animation cover it up
-			//float xOffset = sr.bounds.size.x /4;
-			//Vector3 fPos = transform.position-Vector3.up*yOffset+Vector3.left*xOffset;
-			Vector3 fPos = transform.position-Vector3.up*yOffset;
-			sr.sortingLayerName = "Betsy";
-			sr.sortingOrder = 1;
-
-			Quaternion r = Quaternion.Euler(transform.position);
-			Transform f = Instantiate (footprint, fPos,r) as Transform;
-			//scale up
-			f.localScale = transform.localScale*2;
-
-			//rotates 50 degrees along X so it looks like it's on the ground
-			//rotates to face the direction that the player is moving
-			if (rigidbody2D.velocity.x<0)
-				f.Rotate(50,0,Vector2.Angle(Vector2.up,rigidbody2D.velocity));
-			else f.Rotate(50,0,180+Vector2.Angle(Vector2.up,-rigidbody2D.velocity));
-
-			//TODO:
-
-			//alternating footsteps are left then right
-			if (leftFootForwards)
-				f.Translate(Vector3.left*0.2f);
-			else f.Translate(Vector3.right*0.2f);
-
-			timeSinceFootprint = 0;
-			leftFootForwards ^= true; //alternate between true and false
+	IEnumerator Footprints() {
+		while (true) {
+			if (rigidbody2D.velocity.magnitude > 0) {
+				SpriteRenderer sr = GetComponent<SpriteRenderer>();
+				
+				//get the feet of the sprite
+				float yOffset = sr.bounds.size.y * footprintOffsetY;
+				//TODO: does it need two sets of footprints or will animation cover it up
+				//float xOffset = sr.bounds.size.x /4;
+				//Vector3 fPos = transform.position-Vector3.up*yOffset+Vector3.left*xOffset;
+				Vector3 fPos = transform.position-Vector3.up*yOffset;
+				sr.sortingLayerName = "Betsy";
+				sr.sortingOrder = 1;
+				
+				Quaternion r = Quaternion.Euler(transform.position);
+				Transform f = Instantiate (footprint, fPos,r) as Transform;
+				//scale up
+				f.localScale = transform.localScale*2;
+				
+				//rotates 50 degrees along X so it looks like it's on the ground
+				//rotates to face the direction that the player is moving
+				if (rigidbody2D.velocity.x<0)
+					f.Rotate(50,0,Vector2.Angle(Vector2.up,rigidbody2D.velocity));
+				else f.Rotate(50,0,180+Vector2.Angle(Vector2.up,-rigidbody2D.velocity));
+				
+				//TODO:
+				
+				//alternating footsteps are left then right
+				if (leftFootForwards)
+					f.Translate(Vector3.left*0.2f);
+				else f.Translate(Vector3.right*0.2f);
+				
+				timeSinceFootprint = 0;
+				leftFootForwards ^= true; //alternate between true and false
+			}
+			yield return new WaitForSeconds(footprintInterval);
 		}
 	}
 	
