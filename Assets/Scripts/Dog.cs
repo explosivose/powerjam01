@@ -51,6 +51,8 @@ public class Dog : MonoBehaviour
 		Vector3 dogScale = transform.localScale;
 		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
 		float PCHeight = 1-(screenPos.y / Screen.height);
+		if (PCHeight < 0.5) //min height 0.5
+			PCHeight = 0.5f;
 		dogScale = PCHeight * Vector3.one;
 		transform.localScale = dogScale;
 	}
@@ -110,7 +112,7 @@ public class Dog : MonoBehaviour
 
 			//get the feet of the sprite
 			float yOffset = sr.bounds.size.y * footprintOffsetY;
-			//TODO: two sets of legs, once animation is added check if X offsets must be added
+			//TODO: does it need two sets of footprints or will animation cover it up
 			//float xOffset = sr.bounds.size.x /4;
 			//Vector3 fPos = transform.position-Vector3.up*yOffset+Vector3.left*xOffset;
 			Vector3 fPos = transform.position-Vector3.up*yOffset;
@@ -128,7 +130,7 @@ public class Dog : MonoBehaviour
 				f.Rotate(50,0,Vector2.Angle(Vector2.up,rigidbody2D.velocity));
 			else f.Rotate(50,0,180+Vector2.Angle(Vector2.up,-rigidbody2D.velocity));
 
-			//TODO: 
+			//TODO:
 
 			//alternating footsteps are left then right
 			if (leftFootForwards)
