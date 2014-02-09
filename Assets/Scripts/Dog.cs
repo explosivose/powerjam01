@@ -28,6 +28,18 @@ public class Dog : MonoBehaviour
 		}
 	}
 	
+	void Awake()
+	{
+	// Spawn the gui manager (main menus and stuff)
+		if (!GUIManager.GUIManagerSpawned)
+		{
+			GameObject GUIManagerPrefab = (GameObject)Resources.Load ("GUIManager", typeof(GameObject));
+			GUIManagerPrefab = Instantiate(GUIManagerPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+			DontDestroyOnLoad(GUIManagerPrefab);
+		}
+	}
+	
+	
 	// Use this for initialization
 	void Start () 
 	{
