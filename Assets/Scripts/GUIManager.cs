@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
-using System.Collections.Generic;
 
 [System.Serializable]
 public class GUIWindow
@@ -150,12 +150,18 @@ public class GUIManager : MonoBehaviour
 
 	public static bool GUIManagerSpawned = false;
 
+	private GUIState state = GUIState.NoWindows;
 	private enum GUIState
 	{
 		MainMenu,
 		Credits,
 		NoWindows
 	}
+	
+	private Rect windowSize = new Rect();
+	private GUISkin menuSkin;
+	private string buildDate = "unknown";
+
 
 	public void ShowMainMenu()
 	{
@@ -170,21 +176,58 @@ public class GUIManager : MonoBehaviour
 	public void ShowNoWindows()
 	{
 		state = GUIState.NoWindows;
+	} 
+
+	// This function automatically retreives build date
+	// Found it here: http://stackoverflow.com/questions/1600962/displaying-the-build-date
+	private DateTime RetrieveLinkerTimestamp()
+	{
+		string filePath = System.Reflection.Assembly.GetCallingAssembly().Location;
+		const int c_PeHeaderOffset = 60;
+		const int c_LinkerTimestampOffset = 8;
+		byte[] b = new byte[2048];
+		System.IO.Stream s = null;
+		
+		try
+		{
+			s = new System.IO.FileStream(filePath, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+			s.Read(b, 0, 2048);
+		}
+		finally
+		{
+			if (s != null)
+			{
+				s.Close();
+			}
+		}
+		
+		int i = System.BitConverter.ToInt32(b, c_PeHeaderOffset);
+		int secondsSince1970 = System.BitConverter.ToInt32(b, i + c_LinkerTimestampOffset);
+		DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0);
+		dt = dt.AddSeconds(secondsSince1970);
+		dt = dt.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(dt).Hours);
+		return dt;
 	}
 	
-	
-
-	
-	private GUIState state = GUIState.NoWindows;
-	
-	
-	private Rect windowSize = new Rect();
-	private GUISkin menuSkin;
 	
 	void Awake()
 	{
 		menuSkin = (GUISkin)Resources.Load ("Menus", typeof(GUISkin));
 		GUIManagerSpawned = true;
+		DateTime buildTime = RetrieveLinkerTimestamp();
+		buildDate = String.Format("{0:d/M/yyyy HH:mm:ss}", buildTime);
+	}
+	
+	void Play()
+	{
+		state = GUIState.NoWindows;
+		Time.timeScale = 1f;
+	}
+	
+	void Pause()
+	{
+		state = GUIState.MainMenu;
+		Time.timeScale = 0f;
 	}
 	
 	/// <summary>
@@ -197,7 +240,7 @@ public class GUIManager : MonoBehaviour
 		
 		// Resume: Hide the main menu
 		if (GUILayout.Button ("Resume Game", menuSkin.button, GUILayout.Height (buttonHeight))) 
-			state = GUIState.NoWindows;
+			Play ();
 		
 		// New game:  Load the first scene
 		GUILayout.Space(5);
@@ -205,7 +248,7 @@ public class GUIManager : MonoBehaviour
 		{
 			Dog.spawnPosition = Vector2.one / 2f;
 			Application.LoadLevel(0);
-			state = GUIState.NoWindows;
+			Play ();
 		}
 		
 		// Credits
@@ -247,11 +290,13 @@ public class GUIManager : MonoBehaviour
 	{
 		GUILayout.Space (15);
 		
+		
 		GUILayout.Label ("SuperCore Game Jam February 8th/9th 2014", menuSkin.label);
-		GUILayout.Space (5);
+		GUILayout.Space (25);
+		GUILayout.Label ("Build date: " + buildDate);
 		
 		// Back to main menu button
-		GUILayout.Space(20);
+		GUILayout.Space(15);
 		if ( GUILayout.Button ("Main Menu", menuSkin.button, GUILayout.Height(buttonHeight)) )
 			state = GUIState.MainMenu;
 	}
@@ -266,11 +311,11 @@ public class GUIManager : MonoBehaviour
 	{
 		if (Input.GetKeyUp(KeyCode.Escape) && state == GUIState.NoWindows) 
 		{
-			state = GUIState.MainMenu;
+			Pause ();
 		}
 		else if ( Input.GetKeyUp(KeyCode.Escape) && state != GUIState.NoWindows)
 		{
-			state = GUIState.NoWindows;
+			Play ();
 		}
 	}
 	
