@@ -14,7 +14,7 @@ public class Dog : MonoBehaviour
 	public float maxSpeed = 50f;			// max dog speed
 	public float currentSpeed = 0f; 		// THIS IS FOR DEBUGGING
 	public Transform footprint;				// footprint prefab/sprite to spawn
-	public int footprintInterval = 30;		// distance between each footprint
+	public float footprintInterval = 0.5f;	// distance between each footprint
 	public float footprintOffsetY = 0.4f;	// unit vectors downwards
 	public static Vector2 spawnPosition;	// as a percentage of screen height/width (0 to 1)
 	
@@ -56,6 +56,7 @@ public class Dog : MonoBehaviour
 		boxoffset = GetComponent<BoxCollider2D> ().center.x;
 		// calculate how far the doggy can smell (smells further when he's sitting still)
 		StartCoroutine( SmellRadius() );
+		//StartCoroutine( Footprints());
 	}
 
 	void Update ()
@@ -106,25 +107,6 @@ public class Dog : MonoBehaviour
 			rot.center = center;
 		}
 		
-		/*
-		//dog changing left-right direction (and hasnt hit max speed)
-		if(x * rigidbody2D.velocity.x < maxSpeed) {
-			rigidbody2D.AddForce(Vector2.right * x * moveForce);
-		}
-
-		// if dog velocity is greater than his max speed then set dog velocity to maxspeed
-		if(Mathf.Abs(rigidbody2D.velocity.x) > maxSpeed)
-			rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.x) * maxSpeed, rigidbody2D.velocity.y);
-
-		//dog changing up-down direction (and hasnt hit max speed)
-		if(y * rigidbody2D.velocity.y < maxSpeed) {
-			rigidbody2D.AddForce(Vector2.up * y * moveForce);
-		}
-
-		// if dog velocity is greater than his max speed then set dog velocity to maxspeed
-		if(Mathf.Abs(rigidbody2D.velocity.y) > maxSpeed) {
-			rigidbody2D.velocity = new Vector2(Mathf.Sign(rigidbody2D.velocity.y) * maxSpeed, rigidbody2D.velocity.x);
-		}*/
 		
 		// moveForce (doesn't have to be calculated every frame)
 		// this is roughly the relationship between these things in the physics engine
@@ -176,6 +158,7 @@ public class Dog : MonoBehaviour
 			timeSinceFootprint = 0;
 			leftFootForwards ^= true; //alternate between true and false
 		}
+	
 	}
 	
 	IEnumerator SmellRadius()
