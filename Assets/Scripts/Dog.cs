@@ -195,6 +195,6 @@ public class Dog : MonoBehaviour
 	
 	void OnGUI()
 	{
-		GUI.Label (new Rect(5,5,100,100), Application.loadedLevelName);
+		//GUI.Label (new Rect(5,5,100,100), Application.loadedLevelName);
 	}
 }
